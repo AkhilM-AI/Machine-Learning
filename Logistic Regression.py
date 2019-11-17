@@ -81,35 +81,35 @@ if __name__ == "__main__":
     # Number of samples in data
     m = len(y)
     #Normalizing the features (scalling features)
-    X= mean_norm(X)
+    X_norm= mean_norm(X)
     # creating design matrix [1,X]
-    X = np.hstack((np.ones((m,1)),X))
-    n_f = np.size(X,1)
+    X_dm = np.hstack((np.ones((m,1)),X_norm))
+    n_f = np.size(X_dm,1)
     #Initializing theta's
     theta = np.zeros((n_f,1))
     #Model parameters
-    lamda =0 ; alpha =.03 ; n_iters = 1500 ; conv_limit = 0.0001
+    lamda =1 ; alpha =.03 ; n_iters = 10000 ; conv_limit = 0.00001
     # Solving Theta 
     
-    #(J_history,theta) = gradient_descent(X,y,theta,alpha,lamda,n_iters)
-    (J_history,theta) = gradient_descent_conv(X,y,theta,alpha,lamda,conv_limit)
+#    (J_history,theta) = gradient_descent(X,y,theta,alpha,lamda,n_iters)
+    (J_history,theta_optimal) = gradient_descent_conv(X_dm,y,theta,alpha,lamda,conv_limit)
     
     
     # plotting the cost function
     plot_cost(J_history)
     
     #Target values from the trained model
-    y_pred = predict(X, theta)
+    y_pred = predict(X_dm, theta_optimal)
     
     # (fraction correct predictions)
     Accuracy = float(sum(y_pred == y))/ float(len(y))
     print(" Accuracy of the classification on training data: ",round(Accuracy*100,2))
     
     #plotting dataset along with the decision boundary from the model
-    slope = -(theta[1] / theta[2])
-    intercept = -(theta[0] / theta[2])
+    slope = -(theta_optimal[1] / theta_optimal[2])
+    intercept = -(theta_optimal[0] / theta_optimal[2])
     
-    plt.scatter(X[:,1], X[:,2],c=y_pred.T[0], cmap='viridis')
+    plt.scatter(X_dm[:,1], X_dm[:,2],c=y.T[0], cmap='viridis')
     ax = plt.gca()
     ax.autoscale(False)
     x_vals = np.array(ax.get_xlim())
